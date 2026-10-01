@@ -1,1 +1,12 @@
-github.com/kghsurgery/ksdmp/edit/main/.github/workflows/keepalive.yml
+name: keep-alive
+on:
+  schedule:
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping KSDMP database
+        run: |
+          curl -s "${{ secrets.SB_URL }}/rest/v1/rpc/ksdmp_ping" -H "apikey: ${{ secrets.SB_KEY }}" -H "Authorization: Bearer ${{ secrets.SB_KEY }}"
