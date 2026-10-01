@@ -71,8 +71,9 @@ h3{font-size:15px;margin:18px 0 8px;font-weight:650;color:var(--green2)}
 fieldset{border:0;padding:0;margin:0 0 8px}
 legend{font-weight:650;color:var(--green2);font-size:15px;padding:0 0 6px;margin:6px 0 10px;display:block;width:100%;border-bottom:1px solid var(--line)}
 .seg{display:flex;gap:6px;flex-wrap:wrap}
-.seg label{flex:1;min-width:110px}
-.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{flex:1;min-width:110px;position:relative}
+.seg input{position:absolute;opacity:0;pointer-events:none;width:1px!important;height:1px;min-height:0!important;margin:0;padding:0;left:0;top:0}
+html,body{overflow-x:hidden}
 .seg span{display:flex;align-items:center;justify-content:center;min-height:46px;border:1.5px solid var(--line);border-radius:8px;background:#fff;font-weight:600;color:var(--ink);cursor:pointer;padding:6px 10px;text-align:center;font-size:14.5px}
 .seg input:checked+span{background:var(--green);border-color:var(--green);color:#fff}
 .seg input:focus-visible+span{outline:3px solid var(--gold)}
@@ -475,6 +476,7 @@ function kpisHome(){const m0=today().slice(0,8)+'01',t=today();const A=recs('adm
   return `<div class="kpis"><div class="kpi gold"><div class="v">${inW}</div><div class="l">Patients in ward now</div></div><div class="kpi"><div class="v">${adm}</div><div class="l">Admissions this month</div></div>
   <div class="kpi blue"><div class="v">${ops.length}</div><div class="l">Operations this month (${ops.filter(o=>o.data.cls==='Major').length} major)</div></div><div class="kpi blue"><div class="v">${en}</div><div class="l">Endoscopies this month</div></div>
   <div class="kpi ${d?'red':''}"><div class="v">${d}</div><div class="l">Deaths this month</div></div></div>`}
+function greetName(){const n=String(S.user.name||'').replace(/\(.*?\)/g,'').trim().split(/\s+/);return /^(dr|sr|ao|heo|mr|mrs|ms|prof)\.?$/i.test(n[0])&&n.length>1?n[0]+' '+n[n.length-1]:n[0]}
 function vHome(){const r=role(),big=[];
   if(can.adm())big.push(`<a href="#/adm/new">${ic('plus')}New admission</a>`);
   if(can.theatre())big.push(`<a class="alt" href="#/op/new">${ic('scalpel')}Record operation</a>`,`<a class="alt" href="#/endo/new">${ic('scope')}Record endoscopy</a>`);
@@ -482,7 +484,7 @@ function vHome(){const r=role(),big=[];
   big.push(`<a class="alt2" href="#/audit">${ic('chart')}Generate audit</a>`);
   const tOps=[...recs('op'),...recs('endo')].filter(x=>x.data.date===today());
   const inW=recs('adm').filter(a=>status(a)==='In ward').sort((a,b)=>los(b)-los(a));
-  return `<div class="top"><div><h1>Good ${new Date().getHours()<12?'morning':new Date().getHours()<17?'afternoon':'evening'}, ${esc(S.user.name.split(' ')[0])}</h1><p class="sub">${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} – ${esc(S.settings.hospital)}</p></div></div>
+  return `<div class="top"><div><h1>Good ${new Date().getHours()<12?'morning':new Date().getHours()<17?'afternoon':'evening'}, ${esc(greetName())}</h1><p class="sub">${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} – ${esc(S.settings.hospital)}</p></div></div>
   ${homeBanners()}<div class="big">${big.join('')}</div>${kpisHome()}
   ${r==='theatre'?`<div class="card"><h2>Today in theatre (${tOps.length})</h2>${theatreList(tOps)}</div>`:''}
   <div class="card"><h2>Patients in ward (${inW.length})</h2>${inW.length?admTable(inW):'<div class="empty">No patients currently admitted.</div>'}</div>`}
